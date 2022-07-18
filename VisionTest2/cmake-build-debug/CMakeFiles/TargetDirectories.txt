@@ -1,0 +1,3 @@
+D:/Adam_summer_vaction/VisionTest2/cmake-build-debug/CMakeFiles/VisionTest2.dir
+D:/Adam_summer_vaction/VisionTest2/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Adam_summer_vaction/VisionTest2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
