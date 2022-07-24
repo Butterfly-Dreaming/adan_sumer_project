@@ -1,0 +1,45 @@
+import cv2
+import numpy as np
+import math
+
+def isRotationMatrix(R) :
+    Rt = np.transpose(R)
+    shouldBeIdentity = np.dot(Rt, R)
+    I = np.identity(3, dtype = R.dtype)
+    n = np.linalg.norm(I - shouldBeIdentity)
+    return n < 1e-6
+
+def rotationMatrixToEulerAngles(R):
+    assert (isRotationMatrix(R))
+
+    sy = math.sqrt(R[0, 0] * R[0, 0] + R[1, 0] * R[1, 0])
+
+    singular = sy < 1e-6
+
+    if not singular:
+        x = math.atan2(R[2, 1], R[2, 2])
+        y = math.atan2(-R[2, 0], sy)
+        z = math.atan2(R[1, 0], R[0, 0])
+    else:
+        x = math.atan2(-R[1, 2], R[1, 1])
+        y = math.atan2(-R[2, 0], sy)
+        z = 0
+
+    return np.array([x, y, z])
+
+revo = (1,2,3)#旋转向量
+P=np.array((-4.216691,-6.537546,-9.616652))
+R_= cv2.Rodrigues(revo)
+R_a=np.dot(R_[0],P)
+print(R_a)#所求的云台坐标
+angle_a=rotationMatrixToEulerAngles(R_[0])#求欧拉角
+R=((-angle_a[0],-angle_a[1],0))#需要旋转的欧拉角
+R_x=([[1,0,0],[0,np.cos(R[0]),-np.sin(R[0])],[0,np.sin(R[0]),np.cos(R[0])]])
+R_y=([[np.cos(R[1]),0,np.sin(R[1])],[0,1,0],[-np.sin(R[1]),0,np.cos(R[1])]])
+R_z=([[np.cos(R[2]),np.sin(R[2]),0],[np.sin(R[2]),np.cos(R[2]),0],[0,0,1]])
+R_a=np.dot(R_z,R_y)
+R_b=np.dot(R_a,R_x)
+rot_mat = R_b[:3, :3]
+# 把旋转矩阵转化为旋转向量
+rvec, _ = cv2.Rodrigues(rot_mat)
+print(f"rvec:\n {rvec}")
